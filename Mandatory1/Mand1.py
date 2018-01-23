@@ -1,0 +1,227 @@
+import random
+import codecs
+import csv
+import math
+
+MAXPHEROMONES = 100000
+MINPHEROMONES = 1
+
+
+class Node:
+    def __init__(self, name):
+        self.name = name
+        self.edges = []
+
+    def rouletteWheelSimple(self):
+        return random.sample(self.edges, 1)[0]
+
+    def rouletteWheel(self, visitedEdges, startNode):
+        visitedNodes = [oneEdge.toNode for oneEdge in visitedEdges]
+        viableEdges = [oneEdge for oneEdge in self.edges if
+                       not oneEdge.toNode in visitedNodes and oneEdge.toNode != startNode]
+        if not viableEdges:
+            viableEdges = [oneEdge for oneEdge in self.edges if not oneEdge.toNode in visitedNodes]
+
+        allPheromones = sum([oneEdge.pheromones for oneEdge in viableEdges])
+        num = random.uniform(0, allPheromones)
+        s = 0
+        i = 0
+        selectedEdge = viableEdges[i]
+        while (s <= num):
+            selectedEdge = viableEdges[i]
+            s += selectedEdge.pheromones
+            i += 1
+        return selectedEdge
+
+    def __repr__(self):
+        return self.name
+
+
+class Edge:
+    def __init__(self, fromNode, toNode, cost):
+        self.fromNode = fromNode
+        self.toNode = toNode
+        self.cost = cost
+        self.pheromones = MAXPHEROMONES
+
+    def checkPheromones(self):
+        if (self.pheromones > MAXPHEROMONES):
+            self.pheromones = MAXPHEROMONES
+        if (self.pheromones < MINPHEROMONES):
+            self.pheromones = MINPHEROMONES
+
+    def __repr__(self):
+        return self.fromNode + "--(" + str(self.cost) + ")--" + self.toNode
+
+
+'''
+a = Node("A")
+b = Node("B")
+c = Node("C")
+d = Node("D")
+e = Node("E")
+
+nodes = [a, b, c, d, e]
+edges = [
+    Edge(a, b, 100),
+    Edge(a, c, 175),
+    Edge(a, d, 100),
+    Edge(a, e, 75),
+    Edge(b, c, 50),
+    Edge(b, d, 75),
+    Edge(b, e, 125),
+    Edge(c, d, 100),
+    Edge(c, e, 125),
+    Edge(d, e, 75)]
+'''
+
+
+def loader(startPoint, endPoint, nCities, country="no"):
+    #Make so it asks for country file
+    nodes = dict()
+    edges = dict()
+    with codecs.open("worldcitiespop.csv", "r", encoding="utf-8", errors="ignore") as f:
+        allCities = csv.reader(f, delimiter=',', quotechar='|')
+        possibrahCities = dict()
+        for line in allCities:
+            if line[0] == country and line[1].__len__() > 1:
+                la = int(float(line[5])*10)
+                lo = int(float(line[6])*10)
+                hashval = la*lo
+                if not hashval in possibrahCities:
+                    #possibrahCities[hashval] = []
+                    possibrahCities[hashval] = line
+                elif possibrahCities[hashval][4] < line[4]:
+                    possibrahCities[hashval] = line
+
+                # cities = f.readlines()
+                # print(cities)
+        #print(possibrahCities)
+        print(possibrahCities.__len__())
+    for departure in possibrahCities:
+        la1 = possibrahCities[departure][5] #x
+        lo1 = possibrahCities[departure][6] #y
+        nodes[possibrahCities[departure][1]] = Node(possibrahCities[departure][1].upper())
+        for destination in possibrahCities:
+            if departure != destination:
+                la2 = possibrahCities[destination][5] #x1
+                lo2 = possibrahCities[destination][6] #y1
+                xDot = abs(float(la2)-float(la1))
+                yDot = abs(float(lo2)-float(lo1))
+                distance = math.sqrt(xDot**2+yDot**2)
+                #print(distance)
+                ##
+                if not possibrahCities[departure][1] in edges:
+                    edges[possibrahCities[departure][1]] = []
+                edges[possibrahCities[departure][1]].append(Edge(possibrahCities[departure][1], possibrahCities[destination][1], distance))
+#    print(edges)
+
+    #Write to file
+loader("st", "ab", 2)
+'''
+
+# Make symetrical
+for oneEdge in edges[:]:
+    edges.append(Edge(oneEdge.toNode, oneEdge.fromNode, oneEdge.cost))
+
+# Assign to nodes
+for oneEdge in edges:
+    for oneNode in nodes:
+        if (oneEdge.fromNode == oneNode):
+            oneNode.edges.append(oneEdge)
+
+'''
+'''
+def checkAllNodesPresent(edges):
+    visitedNodes = [edge.toNode for edge in edges]
+    return set(nodes).issubset(visitedNodes)
+
+
+class Greedy:
+    def __init__(self):
+        self.visitedEdges = []
+        self.visitedNodes = []
+
+    def walk(self, startNode):
+        currentNode = startNode
+        currentEdge = None
+        while (not checkAllNodesPresent(self.visitedEdges)):
+            possibleEdges = [(edge.cost, edge) for edge in currentNode.edges if edge.toNode not in self.visitedNodes]
+            #print(possibleEdges)
+            #possibleEdges.sort()
+            possibleEdges.sort(key=lambda edge:edge[0])
+            # import pdb;pdb.set_trace()
+            currentEdge = possibleEdges[0][1]
+            currentNode = currentEdge.toNode
+            self.visitedEdges.append(currentEdge)
+            self.visitedNodes.append(currentNode)
+            print(currentNode, currentEdge)
+
+
+print("Greedy")
+g = Greedy()
+g.walk(a)
+print("Cost:", sum([e.cost for e in g.visitedEdges]))
+
+
+# Cost function
+def getSum(edges):
+    return sum(e.cost for e in edges)
+
+
+MAXCOST = getSum(edges)
+bestScore = 0
+bestSolution = []
+
+'''
+'''
+class ANT:
+    def __init__(self):
+        self.visitedEdges = []
+
+    def walk(self, startNode):
+        currentNode = startNode
+        currentEdge = None
+        while (not checkAllNodesPresent(self.visitedEdges)):
+            currentEdge = currentNode.rouletteWheel(self.visitedEdges, startNode)
+            currentNode = currentEdge.toNode
+            self.visitedEdges.append(currentEdge)
+
+    def pheromones(self):
+        currentCost = getSum(self.visitedEdges)
+        if (currentCost < MAXCOST):
+            score = 1000 ** (1 - float(currentCost) / MAXCOST)  # Score function
+            global bestScore
+            global bestEdges
+            if (score > bestScore):
+                bestScore = score
+                bestEdges = self.visitedEdges
+            for oneEdge in bestEdges:
+                oneEdge.pheromones += score
+
+
+def evaporate(edges):
+    for edge in edges:
+        edge.pheromones *= 0.99
+
+
+def checkAllEdges(edges):
+    for edge in edges:
+        edge.checkPheromones()
+
+
+for i in range(100000):
+    evaporate(edges)
+    ant = ANT()
+    ant.walk(a)
+    ant.pheromones()
+    checkAllEdges(edges)
+    # print i,getSum(ant.visitedEdges)
+    print(getSum(ant.visitedEdges))
+
+# Printing
+ant = ANT()
+ant.walk(a)
+for edge in ant.visitedEdges:
+    print(edge, edge.pheromones)
+'''
