@@ -29,8 +29,8 @@ def loader():
                         break
                     floatList.append(float(num))
                     counter += 1
-                dataList.append(floatList)
-            allData[newFile] += (dataList)
+                dataList += (floatList)
+            allData[newFile].append(dataList)
         #print(allData['alive'])
             #print(dataList)
     trainingData = dict()
@@ -70,6 +70,7 @@ def mapTo2D(data):
         retval.append((x, y))
     return retval
 
+print(trainingData['alive'])
 trainingMap2D = dict()
 for key in trainingData:
     for d in trainingData[key]:
@@ -96,7 +97,7 @@ def returnXY(data, n=8):
     return X, Y
 
 X, Y = returnXY(trainingData)
-
+print(X)
 
 C = 1.0
 gamma = 0.5
