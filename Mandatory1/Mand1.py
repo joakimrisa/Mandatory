@@ -2,6 +2,7 @@ import random
 import codecs
 import csv
 import math
+import pickle
 
 MAXPHEROMONES = 100000
 MINPHEROMONES = 1
@@ -14,7 +15,7 @@ currentScore = 0
 
 
 class Node:
-    def __init__(self, name):
+    def __init__(self, name, ):
         self.name = name
         self.edges = []
 
@@ -39,7 +40,7 @@ class Node:
         i = 0
 
         selectedEdge = viableEdges[i]
-        while (s <= num):
+        while s <= num:
             selectedEdge = viableEdges[i]
             s += selectedEdge.pheromones
             i += 1
@@ -65,10 +66,20 @@ class Edge:
     def __repr__(self):
         return self.fromNode.name + "--(" + str(self.cost) + ")--" + self.toNode.name
 
+
 def checkAllNodesPresent(edges):
     visitedNodes = [edge.toNode for edge in edges]
 
     return set(nodes.values()).issubset(visitedNodes)
+
+
+class City:
+    def __init__(self, country, name, population, la, lo):
+        self.country = country
+        self.name = name
+        self.population = population
+        self.la = la
+        self.lo = la
 
 
 class Greedy:
@@ -90,6 +101,52 @@ class Greedy:
             self.visitedEdges.append(currentEdge)
             self.visitedNodes.append(currentNode)
             print(currentNode, currentEdge)
+
+
+def loader2(country="no", limit=100):
+    global nodes
+    global edges
+    name = country + "_" + str(limit)
+    try:
+        nodes = pickle.load(open(name + "_nodes.p", "rb"))
+        edges = pickle.load(open(name + "_edges.p", "rb"))
+    except:
+        print("Shouldn't load edges and nodes...")
+        with codecs.open("worldcitiespop.csv", "r", encoding="utf-8", errors="ignore") as f:
+            allCities = csv.reader(f, delimiter=',', quotechar='|')
+            uniqueCities = []
+            usedCities = set()
+            usedLocations = set()
+            for city in allCities:
+                if city[0] == country:
+                    la = int(float(city[5]) * 100)
+                    lo = int(float(city[6]) * 100)
+                    if uniqueCities.__len__() == limit:
+                        break
+                    if not usedCities.__contains__(city[1]) and not usedLocations.__contains__((la, lo)) and city[
+                        1].__len__() > 2:
+                        uniqueCities.append(city)
+                        usedLocations.add((la, lo))
+                        usedCities.add(city[1])
+                        nodes[city[1]] = Node(city[1].upper())
+
+        for departure in uniqueCities:
+            la1 = departure[5]  # x
+            lo1 = departure[6]  # y
+            for destination in uniqueCities:
+                if departure != destination:
+                    la2 = destination[5]  # x1
+                    lo2 = destination[6]  # y1
+                    xDot = abs(float(la2) - float(la1))
+                    yDot = abs(float(lo2) - float(lo1))
+                    distance = math.sqrt(xDot ** 2 + yDot ** 2)
+                    if not departure[1] in edges:
+                        edges[departure[1]] = []
+                    edges[departure[1]].append(
+                        Edge(nodes[departure[1]], nodes[destination[1]], distance))
+            nodes[departure[1]].edges = edges[departure[1]]
+        pickle.dump(nodes, open(name + "_nodes.p", "wb"))
+        pickle.dump(edges, open(name + "_edges.p", "wb"))
 
 
 def loader(country="no", limit=100):
@@ -123,7 +180,7 @@ def loader(country="no", limit=100):
                     del nodes[possibrahCities[hashval][1]]
                     possibrahCities[hashval] = line
                     nodes[line[1]] = Node(line[1].upper())
-                    print("2")
+
 
                 elif possibrahCities[hashval][1] != line[1]:
                     print("3")
@@ -137,7 +194,7 @@ def loader(country="no", limit=100):
                     print(line[1])
                     nodes[possibrahCities[hashval][1]] = Node(line[1].upper())
 
-                #kebabfix, må endres om goody sier at vi må ha alle byer med ;)
+                    # kebabfix, må endres om goody sier at vi må ha alle byer med ;)
 
     for i in possibrahCities:
         if not possibrahCities[i][1] in nodes:
@@ -145,7 +202,6 @@ def loader(country="no", limit=100):
 
     print(possibrahCities)
     print(nodes)
-
 
     for departure in possibrahCities:
         la1 = possibrahCities[departure][5]  # x
@@ -194,7 +250,6 @@ class ANT:
 
     def walk(self, startNode, endNode, numCities):
         currentNode = startNode
-        # print(type(currentNode))
         currentEdge = None
         while (not self.visitedEdges.__len__() >= numCities + 1):
             # print(self.visitedEdges)
@@ -202,16 +257,6 @@ class ANT:
             # print(type(currentEdge))
             currentNode = currentEdge.toNode
             self.visitedEdges.append(currentEdge)
-
-        ''' 
-        #print(self.visitedEdges)
-      for edge in edges[currentNode.name.lower()]:
-            if(edge.toNode == endNode):
-                currentEdge = edge
-                self.visitedEdges.append(currentEdge)
-                print("duja")
-                break
-'''
 
     def pheromones(self):
         global MAXCOST
@@ -239,22 +284,15 @@ def checkAllEdges(edges):
         edge.checkPheromones()
 
 
-def runWalk(startCity, endCity, numCity=10, threshold=10):
+def runWalk(startCity, endCity, numCity=10, iterations=10):
     global MAXCOST
     last = 0
     counter = 0
     allSums = set()
     for city in edges:
         MAXCOST += getSum(edges[city])
-    while True:
-        if last == bestScore:
-            counter += 1
-            if counter == threshold:
-                # print("hola")
-                break
-        else:
-            # print("else")
-            counter = 0
+    #currentSum = 0
+    while counter < iterations:
         for city in nodes:
             evaporate(nodes[city].edges)
             ant = ANT()
@@ -266,13 +304,15 @@ def runWalk(startCity, endCity, numCity=10, threshold=10):
             # print i,getSum(ant.visitedEdges)
             currentSum = getSum(ant.visitedEdges)
             allSums.add(currentSum)
+            print(currentSum)
+        counter += 1
     print(currentSum)
     print(min(allSums))
     # print(ant.visitedEdges)
 
 
-loader('no', 1000)
-runWalk('aabjorgan', 'aadalsbruk', 10, threshold=30)
+loader2('no', 100)
+runWalk('aabjorgan', 'aadalsbruk', 6, iterations=1000)
 
 '''
 for i in range(100000):
