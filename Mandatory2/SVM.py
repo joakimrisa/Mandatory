@@ -3,6 +3,7 @@ import numpy as np
 from sklearn import svm
 import os
 import warnings
+import itertools
 
 warnings.simplefilter("ignore")
 
@@ -53,6 +54,7 @@ trainingData, testData = loader()
 training = [[int(i) for i in i.split(",")] for i in open("pendigits.tra").readlines() if i.strip()]
 testing = [[int(i) for i in i.split(",")] for i in open("pendigits.tes").readlines() if i.strip()]
 
+
 training_0 = [i[:-1] for i in training if i[-1] == 0]
 training_1 = [i[:-1] for i in training if i[-1] == 1]
 
@@ -86,34 +88,100 @@ for key in testData:
 
 #print(trainingMap2D)
 
-def returnXY(data, n=8):
-    X = []
+def returnXY(data, attriSet, n=8):
+    X = np.empty((data.__len__()*n, len(attriSet), 60))
     Y = []
+    c = 0
+    c2 = 0
+    c3 = 0
     for key in data:
-        X += data[key][:n]
+        for k in data[key][:n]:
+            for v in k:
+                #print(c, c2, c3)
+                if attriSet.__contains__(c2):
+                    X[c][c2][c3] = v
+
+                c2 += 1
+                if c2 == max(attriSet):
+                    c3 += 1
+                    c2 = 0
+                    if c3 == 60:
+                        c += 1
+                        c3 = 0
+                        break
+
+        #print(k)
+
+        #X += data[key][:n]
         Y += [key for i in data[key][:n]]
-    X = np.array(X)
+    #X = np.array(X)
     Y = np.array(Y)
     return X, Y
 
-X, Y = returnXY(trainingData)
-print(X)
+def permSet():
+    possibleNumbras = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    permas = set()
+    for n in range(11):
+        for perum in itertools.combinations(possibleNumbras, n+1):
+            permas.add(perum)
+    return permas
 
-C = 1.0
-gamma = 0.5
 
+def runForever():
+    combinations = permSet()
+    bestDict = dict()
+    bestDict['linear'] = 0
+    bestDict['rbf'] = 0
+    bestDict['sigmoid'] = 0
+    bestDict['poly'] = 0
+    for combo in combinations:
+        X, Y = returnXY(trainingData, combo, n=25)
+        X = X.reshape(X.shape[0], -1)
+        testX, testY = returnXY(testData, combo, n=12)
+        testX = testX.reshape(testX.shape[0], -1)
+        cRange = np.arange(0.1, 20, 0.2)
+        gRange = np.arange(0.1, 20, 0.1)
+        for C in cRange:
+            for gamma in gRange:
+                svm_linear = svm.SVC(kernel='linear', C=C, gamma=gamma).fit(X, Y)
+                svm_rbf = svm.SVC(kernel='rbf', C=C, gamma=gamma).fit(X, Y)
+                svm_sigmoid = svm.SVC(kernel='sigmoid', C=C, gamma=gamma).fit(X, Y)
+                svm_poly = svm.SVC(kernel='poly', C=C, gamma=gamma).fit(X, Y)
+                correct, _ = checkSVM(svm_linear, testX, testY)
+                if correct > bestDict['linear']:
+                    print('linear: ', correct, ' C: ', C, ' Gamma: ', gamma, ' Combo: ', combo)
+                    bestDict['linear'] = correct
 
-svm_linear = svm.SVC(kernel='linear', C=C, gamma=gamma).fit(X, Y)
-svm_rbf = svm.SVC(kernel='rbf', C=C, gamma=gamma).fit(X, Y)
-svm_sigmoid = svm.SVC(kernel='sigmoid', C=C, gamma=gamma).fit(X, Y)
-svm_poly = svm.SVC(kernel='poly', C=C, gamma=gamma).fit(X, Y)
+                correct, _ = checkSVM(svm_rbf, testX, testY)
+                if correct > bestDict['rbf']:
+                    print('rbf: ', correct, ' C: ', C, ' Gamma: ', gamma, ' Combo: ', combo)
+                    bestDict['rbf'] = correct
 
-r = svm_poly.predict(testData['hurt'][:8])
-print(r)
-r = svm_rbf.predict(testData['hurt'][:8])
-print(r)
-r = svm_sigmoid.predict(testData['hurt'][:8])
-print(r)
+                correct, _ = checkSVM(svm_sigmoid, testX, testY)
+                if correct > bestDict['sigmoid']:
+                    print('sigmoid: ', correct, ' C: ', C, ' Gamma: ', gamma, ' Combo: ', combo)
+                    bestDict['sigmoid'] = correct
+
+                correct, _ = checkSVM(svm_poly, testX, testY)
+                if correct > bestDict['poly']:
+                    print('poly: ', correct, ' C: ', C, ' Gamma: ', gamma, ' Combo: ', combo)
+                    bestDict['poly'] = correct
+
+def checkSVM(svm, X, Y):
+    r = svm.predict(X)
+    correct = 0
+    wrong = 0
+    #category = dict()
+    for n in range(len(Y)):
+        #if r[n] not in category:
+            #category[r[n]] = 0
+        if r[n] == Y[n]:
+            correct += 1
+            #category[r[n]] += 1
+        else:
+            wrong += 1
+    return correct, wrong
+runForever()
 def testSVM(svm, testDict):
     numcorrect = 0.
     numwrong = 0.
@@ -131,15 +199,13 @@ def testSVM(svm, testDict):
 
     return answerDict
 #print(testMap2D['alive'])
-print(trainingData['alive'].__len__())
-print(trainingData['alive'])
-print(testData['alive'].__len__())
-print("Linear", testSVM(svm_linear, testData))
+#print("Linear", checkSVM(svm_linear, testX, testY))
 
-print("RBF", testSVM(svm_rbf, testData))
+#print("RBF", checkSVM(svm_rbf, testX, testY))
 
-print("Sigmoid", testSVM(svm_sigmoid, testData))
+#print("Sigmoid", checkSVM(svm_sigmoid, testX, testY))
 
+#print("Poly", checkSVM(svm_poly, testX, testY))
 
 '''
 training_2d_0 = []
