@@ -11,15 +11,17 @@ import lfwLoader
 
 
 batch_size = 128
-num_classes = 10
+num_classes = 2
 epochs = 12
 
 
 
-img_rows, img_cols = 250,250
-(x_train,y_train),(x_test,y_test) = lfwLoader.loader()
+img_rows, img_cols = 64,64
+(x_train,y_train),(x_test,y_test) = lfwLoader.loader()#mnist.load_data()
+#print(x_train)
 
-print(type(x_train))
+#print(type(x_train))
+
 #print(x_train[200])
 
 '''
@@ -31,9 +33,11 @@ for x in range(100):
 plt.show()
 '''
 x_train = x_train
+print(x_train)
+print(x_train.shape)
 y_train = y_train
 
-x_train = x_train.reshape(x_train.shape[0],img_rows,img_cols,1)
+x_train = x_train.reshape(x_train.shape[0],img_rows, img_cols,1)
 x_test = x_test.reshape(x_test.shape[0],img_rows,img_cols,1)
 input_shape = (img_rows,img_cols,1)
 
@@ -58,7 +62,7 @@ model.add(Conv2D(64,
 model.add(MaxPooling2D(pool_size=(2,2)))
 model.add(Dropout(0.25))
 model.add(Flatten())
-model.add(Dense(128,activation='relu'))
+model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes,activation='sigmoid'))
 model.compile(
