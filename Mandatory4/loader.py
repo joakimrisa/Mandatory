@@ -1,6 +1,8 @@
 import os
 import re
-def forFolderWords(path, n = 10):
+
+
+def forFolderWords(path, n=10):
     data = []
     c = 0
     nonWords = set()
@@ -8,9 +10,8 @@ def forFolderWords(path, n = 10):
     nonWords.add('')
     for root, dirs, files in os.walk(path):
         for file in files:
-            lines = open(os.path.join(root,file), errors='ignore').readlines()
+            lines = open(os.path.join(root, file), errors='ignore').readlines()
             for word in lines:
-
                 words = word.split(' ')
                 for w in words:
 
@@ -25,7 +26,6 @@ def forFolderWords(path, n = 10):
                 totalChars = len(data)
                 numberOfUniqueChars = len(chars)
 
-
                 CharsForids = {char: Id for Id, char in enumerate(chars)}
 
                 idsForChars = {Id: char for Id, char in enumerate(chars)}
@@ -38,7 +38,7 @@ def forFolderWords(path, n = 10):
 
                 y = []
 
-                for i in range(0, counter, 1):
+                for i in range(0, counter):
                     theInputChars = data[i:i + numberOfCharsToLearn]
                     theOutputChars = data[i + numberOfCharsToLearn]
                     charX.append([CharsForids[char] for char in theInputChars])
@@ -46,14 +46,16 @@ def forFolderWords(path, n = 10):
                 print(data)
                 return (charX, y, numberOfCharsToLearn, numberOfUniqueChars, idsForChars)
 
-def forFolder(path, n = 10):
+
+def forFolder(path, n=10):
     data = []
     c = 0
     for root, dirs, files in os.walk(path):
         for file in files:
-            data += open(os.path.join(root,file), errors='ignore').read().lower()
+            data += open(os.path.join(root, file), errors='ignore').read().lower()
             c += 1
             if n == c:
+                print(file)
                 chars = sorted(list(set(data)))
                 totalChars = len(data)
                 numberOfUniqueChars = len(chars)
@@ -73,13 +75,13 @@ def forFolder(path, n = 10):
                 for i in range(0, counter, 1):
                     theInputChars = data[i:i + numberOfCharsToLearn]
                     theOutputChars = data[i + numberOfCharsToLearn]
-                    charX.append([CharsForids[char] for char in theInputChars])
+                    charX.append(([CharsForids[char] for char in theInputChars]))
                     y.append(CharsForids[theOutputChars])
 
                 return (charX, y, numberOfCharsToLearn, numberOfUniqueChars, idsForChars)
 
-def preprocessing(name):
 
+def preprocessing(name):
     data = open(name, errors='ignore').read().lower()
     chars = sorted(list(set(data)))
     totalChars = len(data)

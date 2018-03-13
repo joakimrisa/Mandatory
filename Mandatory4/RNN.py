@@ -6,41 +6,60 @@ from keras.layers import LSTM
 from keras.utils import np_utils
 import loader
 
-charX, y, numberOfCharsToLearn, numberOfUniqueChars, idsForChars = loader.forFolderWords("comm_use.C-H.txt", 40)
-print("wallah")
-X = np.reshape(charX, (len(charX), numberOfCharsToLearn, 1))
+charX, y, numberOfCharsToLearn, numberOfUniqueChars, idsForChars = loader.forFolder("data/comm_use.0-9A-B.txt", 1)
 
-X = X/float(numberOfUniqueChars)
 
+
+
+number = 70000
+charX = np.array(charX[:number])
+
+y = y[:number]
+
+print(charX)
+
+
+X = np_utils.to_categorical(charX, num_classes=numberOfUniqueChars)
+
+#x = np.reshape(charX, (len(charX), numberOfCharsToLearn, 1))
+#print(x.shape)
+print(X)
+
+#X = X/float(numberOfUniqueChars)
+#print(y)
 
 y = np_utils.to_categorical(y)
-print(y)
-
+#print(y)
+print(X.shape[0])
+print(X.shape[1])
 
 model = Sequential()
 model.add(LSTM(128, input_shape=(X.shape[1], X.shape[2])))
-model.add(Dropout(0.20))
+#model.add(Dropout(0.20))
 model.add(Dense(y.shape[1], activation='softmax'))
-model.compile(loss='cate,'
-                   'gorical_crossentropy', optimizer='adam')
-model.fit(X, y, epochs=5, batch_size=256)
-model.save_weights("Othello.hdf5")
-#model.load_weights("Othello.hdf5")
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+model.load_weights("Othello.hdf6")
+model.fit(X, y, epochs=30, batch_size=1024)
+model.save_weights("Othello.hdf6")
+
 
 randomVal = np.random.randint(0, len(charX)-1)
-randomStart = charX[randomVal]
+randomStart = list(charX[randomVal])
+print(randomVal)
 
-ompa = 0
-for i in range(4):
-    x = np.reshape(randomStart, (1, len(randomStart), 1))
-    x = x/float(numberOfUniqueChars)
-    #print(x)
-    pred = model.predict(x)
+print("".join([idsForChars[value] for value in randomStart]))
+for i in range(100):
+    #x = np.reshape(randomStart, (1, len(randomStart), 1))
+    #print(randomStart)
+    X = np_utils.to_categorical(randomStart, num_classes=numberOfUniqueChars)
+    #print(X.shape)
+    X = np.expand_dims(X, axis=0)
+    #print(X.shape)
+    #x = x/float(numberOfUniqueChars)
+    pred = model.predict(X)
     index = np.argmax(pred)
     randomStart.append(index)
     randomStart = randomStart[1: len(randomStart)]
-    ompa = randomStart
 
-print(ompa)
-print(index)
-print(" ".join([idsForChars[value] for value in randomStart]))
+print(randomStart)
+print("".join([idsForChars[value] for value in randomStart]))
