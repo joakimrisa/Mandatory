@@ -14,7 +14,7 @@ def dice(song, millisecond):
     return songs
 
 
-for root, dirs, files in os.walk("LP_quality"):
+for root, dirs, files in os.walk("CD_quality(fix)"):
     for file in files:
         path = os.path.join(root, file)
         print(path)
@@ -25,7 +25,7 @@ for root, dirs, files in os.walk("LP_quality"):
         i=1
         for song in sounds:
             filename = file.split(".")
-            folder = os.path.basename("LP_quality(split)")
+            folder = os.path.basename("training")
             path = os.path.join(folder, str(filename[0] + "_" + str(i) + ".wav"))
             print(path)
             song.export(path, format="wav")

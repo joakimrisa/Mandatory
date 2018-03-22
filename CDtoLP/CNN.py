@@ -9,18 +9,19 @@ import keras
 import matplotlib.pyplot as plt
 import loader
 
+img_rows = 60
+img_cols = 80
 
-
-(x_train,y_train),(x_test,y_test) = loader.loader("training")
+(x_train,y_train),(x_test,y_test) = loader.loaderPictures("training\pictures")
 
 x_train = x_train
 print(x_train)
 print(x_train.shape)
 y_train = y_train
 
-x_train = x_train.reshape(x_train.shape[0],1,1)
-x_test = x_test.reshape(x_test.shape[0],1,1)
-#input_shape = (img_rows,img_cols,1)
+x_train = x_train.reshape(x_train.shape[0],img_rows, img_cols,1)
+x_test = x_test.reshape(x_test.shape[0],img_rows, img_cols,1)
+input_shape = (img_rows,img_cols,1)
 
 
 print('x_train shape:',x_train.shape)
@@ -34,7 +35,7 @@ model = Sequential()
 model.add(Conv2D(32,
         kernel_size=(3,3),
         activation='relu',
-        input_shape=x_train.shape))
+        input_shape=input_shape))
 model.add(Conv2D(64,
         kernel_size=(3,3),
         activation='relu'))
@@ -43,11 +44,11 @@ model.add(Dropout(0.25))
 model.add(Flatten())
 model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(2,activation='sigmoid'))
+model.add(Dense(2, activation='sigmoid'))
 model.compile(
         loss=keras.losses.categorical_crossentropy,
         optimizer=keras.optimizers.Adadelta(),
         metrics=['accuracy'])
-model.fit(x_train,y_train,batch_size=134,epochs=12,verbose=1,validation_data=(x_test,y_test))
+model.fit(x_train,y_train,batch_size=32,epochs=30,verbose=1,validation_data=(x_test,y_test))
 score = model.evaluate(x_test,y_test,verbose=0)
 
