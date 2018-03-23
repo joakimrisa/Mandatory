@@ -14,14 +14,14 @@ def dice(song, millisecond):
     return songs
 
 
-for root, dirs, files in os.walk("CD_quality(fix)"):
+for root, dirs, files in os.walk("LP_quality"):
     for file in files:
         path = os.path.join(root, file)
         print(path)
         print(root)
         sound = AudioSegment.from_wav(path)
         # len() and slicing are in milliseconds
-        sounds = dice(sound, 10000)
+        sounds = dice(sound, 100)
         i=1
         for song in sounds:
             filename = file.split(".")

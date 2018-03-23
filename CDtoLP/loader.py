@@ -49,9 +49,12 @@ def loader(path, testingAmount = 0.8):
             fig, ax = plt.subplots()
             ax.pcolormesh(x, y, np.swapaxes(amplitudes_logged, 0, 1))
             label = root.split("\\")
-            plt.savefig(file.split('.')[0]+"_"+ label[len(label)-1] + ".png")
+            #plt.savefig(file.split('.')[0]+"_"+ label[len(label)-1] + ".png")
+            img = Image.fromarray(ax).save(file.split('.')[0]+"_"+ label[len(label)-1] + ".png")
             plt.close()
     return
+
+
 def fromStringToInt(string):
     if string == "CD_quality":
         return 0
