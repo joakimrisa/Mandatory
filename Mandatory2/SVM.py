@@ -127,6 +127,44 @@ def permSet():
     return permas
 
 
+def runForever2():
+    bestDict = dict()
+    bestDict['linear'] = 0
+    bestDict['rbf'] = 0
+    bestDict['sigmoid'] = 0
+    bestDict['poly'] = 0
+    X, Y = returnXY(trainingData, [0,1,2,3], n=25)
+    X = X.reshape(X.shape[0], -1)
+    testX, testY = returnXY(testData, [0,1,2,3], n=12)
+    testX = testX.reshape(testX.shape[0], -1)
+    cRange = np.arange(0.1, 20, 0.2)
+    gRange = np.arange(0.1, 20, 0.1)
+    for C in cRange:
+        for gamma in gRange:
+            svm_linear = svm.SVC(kernel='linear', C=C, gamma=gamma).fit(X, Y)
+            svm_rbf = svm.SVC(kernel='rbf', C=C, gamma=gamma).fit(X, Y)
+            svm_sigmoid = svm.SVC(kernel='sigmoid', C=C, gamma=gamma).fit(X, Y)
+            svm_poly = svm.SVC(kernel='poly', C=C, gamma=gamma).fit(X, Y)
+            correct, _ = checkSVM(svm_linear, testX, testY)
+            if correct > bestDict['linear']:
+                print('linear: ', correct, ' C: ', C, ' Gamma: ', gamma)
+                bestDict['linear'] = correct
+
+            correct, _ = checkSVM(svm_rbf, testX, testY)
+            if correct > bestDict['rbf']:
+                print('rbf: ', correct, ' C: ', C, ' Gamma: ', gamma)
+                bestDict['rbf'] = correct
+
+            correct, _ = checkSVM(svm_sigmoid, testX, testY)
+            if correct > bestDict['sigmoid']:
+                print('sigmoid: ', correct, ' C: ', C, ' Gamma: ', gamma)
+                bestDict['sigmoid'] = correct
+
+            correct, _ = checkSVM(svm_poly, testX, testY)
+            if correct > bestDict['poly']:
+                print('poly: ', correct, ' C: ', C, ' Gamma: ', gamma)
+                bestDict['poly'] = correct
+
 def runForever():
     combinations = permSet()
     bestDict = dict()
@@ -181,7 +219,7 @@ def checkSVM(svm, X, Y):
         else:
             wrong += 1
     return correct, wrong
-runForever()
+runForever2()
 def testSVM(svm, testDict):
     numcorrect = 0.
     numwrong = 0.
@@ -198,15 +236,35 @@ def testSVM(svm, testDict):
         numwrong = 0
 
     return answerDict
+
+'''
+C = 1
+gamma = 0.5
+Linear (115, 1049)
+RBF (66, 1098)
+Sigmoid (19, 1145)
+Poly (93, 1071)
+
+
+C = 1
+gamma = 0.01
+X, Y = returnXY(trainingData, [0,1,2,3], n=25)
+X = X.reshape(X.shape[0], -1)
+testX, testY = returnXY(testData, [0,1,2,3], n=12)
+testX = testX.reshape(testX.shape[0], -1)
+svm_linear = svm.SVC(kernel='linear', C=C, gamma=gamma).fit(X, Y)
+svm_rbf = svm.SVC(kernel='rbf', C=C, gamma=gamma).fit(X, Y)
+svm_sigmoid = svm.SVC(kernel='sigmoid', C=C, gamma=gamma).fit(X, Y)
+svm_poly = svm.SVC(kernel='poly', C=C, gamma=gamma).fit(X, Y)
 #print(testMap2D['alive'])
-#print("Linear", checkSVM(svm_linear, testX, testY))
+print("Linear", checkSVM(svm_linear, testX, testY))
 
-#print("RBF", checkSVM(svm_rbf, testX, testY))
+print("RBF", checkSVM(svm_rbf, testX, testY))
 
-#print("Sigmoid", checkSVM(svm_sigmoid, testX, testY))
+print("Sigmoid", checkSVM(svm_sigmoid, testX, testY))
 
-#print("Poly", checkSVM(svm_poly, testX, testY))
-
+print("Poly", checkSVM(svm_poly, testX, testY))
+'''
 '''
 training_2d_0 = []
 training_2d_1 = []

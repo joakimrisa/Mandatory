@@ -3,16 +3,24 @@ import codecs
 import csv
 import math
 import pickle
+import sys
+import time
 
 MAXPHEROMONES = 100000
 MINPHEROMONES = 1
 nodes = dict()
 edges = dict()
+clusterNodes = dict()
 MAXCOST = 0
 bestScore = 0
 bestSolution = []
 currentScore = 0
 
+
+class clusterNode:
+    def __init__(self, name,):
+        self.name = name
+        self.nodes = dict()
 
 class Node:
     def __init__(self, name, ):
@@ -107,6 +115,7 @@ def loader2(country="no", limit=100):
     global nodes
     global edges
     name = country + "_" + str(limit)
+    sys.setrecursionlimit(limit*10)
     try:
         nodes = pickle.load(open(name + "_nodes.p", "rb"))
         edges = pickle.load(open(name + "_edges.p", "rb"))
@@ -128,7 +137,7 @@ def loader2(country="no", limit=100):
                         uniqueCities.append(city)
                         usedLocations.add((la, lo))
                         usedCities.add(city[1])
-                        nodes[city[1]] = Node(city[1].upper())
+                        nodes[city[1]] = Node(city[1])
 
         for departure in uniqueCities:
             la1 = departure[5]  # x
@@ -276,13 +285,84 @@ class ANT:
 
 def evaporate(edges):
     for edge in edges:
-        edge.pheromones *= 0.99
+        edge.pheromones *= 0.95
 
 
 def checkAllEdges(edges):
     for edge in edges:
         edge.checkPheromones()
 
+def multiLayer(clusterSize = 10):
+    global nodes
+    global edges
+    global clusterNodes
+    lastClusterTown = None
+    alreadyClustered = set()
+    for node in nodes:
+
+        if not alreadyClustered.__contains__(node):
+            clusterNodes[node] = clusterNode(node)
+            clusterNodes[node].nodes[nodes[node].name] = nodes[node]
+            alreadyClustered.add(node)
+            while clusterNodes[node].nodes.__len__() < clusterSize:
+                minCost = 100
+                minEdge = None
+                for edge in edges[node]:
+                    if edge.cost < minCost:
+                        if not alreadyClustered.__contains__(edge.toNode.name):
+                            minCost = edge.cost
+                            minEdge = edge
+                if minEdge != None:
+                    clusterNodes[node].nodes[minEdge.toNode.name] = nodes[minEdge.toNode.name]
+                    alreadyClustered.add(minEdge.toNode.name)
+                    edges[node].remove(minEdge)
+    for cluster in clusterNodes:
+        for node in clusterNodes[cluster].nodes:
+            edgeList = []
+            for edge in clusterNodes[cluster].nodes[node].edges:
+                if edge.toNode.name in clusterNodes[cluster].nodes:
+                    edgeList.append(edge)
+                elif edge.toNode.name in clusterNodes:
+                    edgeList.append(edge)
+            clusterNodes[cluster].nodes[node].edges = edgeList
+
+def findCity(city):
+    global clusterNodes
+    for cluster in clusterNodes:
+        if city in clusterNodes[cluster].nodes:
+            return cluster
+
+def runWalk2(startCity, endCity, numCity=10, iterations=10):
+    global MAXCOST
+    global clusterNodes
+    last = 0
+    counter = 0
+    allSums = set()
+    for city in edges:
+        MAXCOST += getSum(edges[city])
+    #currentSum = 0
+    startCluster = findCity(startCity)
+    endCluster = findCity(endCity)
+    while counter < iterations:
+        for cluster in clusterNodes:
+            for city in clusterNodes[cluster].nodes:
+                #cityCluster = findCity(city)
+                evaporate(clusterNodes[cluster].nodes[city].edges)
+                ant = ANT()
+                # print(type(nodes['aabjorgan']))
+                ant.walk(clusterNodes[startCluster].nodes[startCity], clusterNodes[endCluster].nodes[endCity], numCity)
+                ant.pheromones()
+                checkAllEdges(clusterNodes[cluster].nodes[city].edges)
+                last = currentScore
+                # print i,getSum(ant.visitedEdges)
+                currentSum = getSum(ant.visitedEdges)
+                allSums.add(currentSum)
+                if counter > int(0.9*iterations):
+                    print(currentSum)
+            counter += 1
+    print(currentSum)
+    print(min(allSums))
+    print(ant.visitedEdges)
 
 def runWalk(startCity, endCity, numCity=10, iterations=10):
     global MAXCOST
@@ -304,15 +384,26 @@ def runWalk(startCity, endCity, numCity=10, iterations=10):
             # print i,getSum(ant.visitedEdges)
             currentSum = getSum(ant.visitedEdges)
             allSums.add(currentSum)
-            print(currentSum)
+            if counter > int(0.9 * iterations):
+                print(currentSum)
         counter += 1
     print(currentSum)
     print(min(allSums))
-    # print(ant.visitedEdges)
+    print(ant.visitedEdges)
 
 
-loader2('no', 100)
-runWalk('aabjorgan', 'aadalsbruk', 6, iterations=1000)
+loader2('no', 1000)
+
+start = time.time()
+runWalk('aabjorgan', 'aadalsbruk', 25, iterations=5000)
+end = time.time()
+print(end-start)
+
+multiLayer(50)
+start = time.time()
+runWalk2('aabjorgan', 'aadalsbruk', 25, iterations=5000)
+end = time.time()
+print(end-start)
 
 '''
 for i in range(100000):
