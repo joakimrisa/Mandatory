@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
 import translate
-def loader(testingAmount = 0.8):
+def loader(trainingAmount = 0.8, folder = "gender"):
     X = []
     Y = []
 
-    for root, dirs, files in os.walk('gender'):
+    for root, dirs, files in os.walk(folder):
         for file in files:
             split = file.split('.')
             basewidth = 64
@@ -16,7 +16,7 @@ def loader(testingAmount = 0.8):
                 im = Image.open(os.path.join(root,file))
                 wpercent = (basewidth / float(im.size[0]))
                 hsize = int((float(im.size[1]) * float(wpercent)))
-                im = im.resize((basewidth, hsize), Image.ANTIALIAS)
+                im = im.resize((64, 64), Image.ANTIALIAS)
                 #im.show()
                 pic = np.array(im)
                 pic = rgb2gray(pic)
@@ -27,8 +27,9 @@ def loader(testingAmount = 0.8):
                 #Y.append(name[0]+name[1])
                 Y.append(translate.toNumber(name[2]))
                 #print(name[2])
-    x_Train = np.array(X[:int(X.__len__()*testingAmount)])
-    y_Train = np.array(Y[:int(Y.__len__()*testingAmount)])
+
+    x_Train = np.array(X[:int(X.__len__()*trainingAmount)])
+    y_Train = np.array(Y[:int(Y.__len__()*trainingAmount)])
     x_Test = np.array(X[x_Train.__len__():])
     y_Test = np.array(Y[y_Train.__len__():])
 

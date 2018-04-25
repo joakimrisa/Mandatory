@@ -183,9 +183,11 @@ Arturo
 Arvie
 Arvin
 Arvind
+Asif
 Arvy
 Ash
 Ashby
+Alvaro
 Ashish
 Ashley
 Ashton
@@ -455,6 +457,7 @@ Chevy
 Chip
 Chris
 Chrissy
+Bono
 Christ
 Christian
 Christiano
@@ -1041,6 +1044,7 @@ Gretchen
 Griff
 Griffin
 Griffith
+Wycliffe
 Griswold
 Grove
 Grover
@@ -1176,11 +1180,9 @@ Hewitt
 Heywood
 Hezekiah
 Higgins
-Hilary
 Hilbert
 Hill
 Hillard
-Hillary
 Hillel
 Hillery
 Hilliard
@@ -1193,7 +1195,9 @@ Hobart
 Hodge
 Hogan
 Hollis
-Holly
+Helio
+Henk
+Hosni
 Homer
 Horace
 Horacio
@@ -1211,6 +1215,7 @@ Hugo
 Humbert
 Humphrey
 Hunt
+Hun
 Hunter
 Huntington
 Huntlee
@@ -1550,8 +1555,10 @@ Lex
 Liam
 Lin
 Lincoln
+Pervez
+Osama
+Oswaldo
 Lind
-Lindsay
 Lindsey
 Lindy
 Linoel
@@ -1559,6 +1566,8 @@ Linus
 Lion
 Lionel
 Lionello
+Lleyton
+Mahathir
 Llewellyn
 Lloyd
 Locke
@@ -1588,6 +1597,8 @@ Ludvig
 Ludwig
 Luigi
 Luis
+Luiz
+Ronaldo
 Lukas
 Luke
 Luther
@@ -1714,7 +1725,6 @@ Merry
 Merv
 Mervin
 Merwin
-Meryl
 Meyer
 Mic
 Micah
@@ -1722,6 +1732,7 @@ Michael
 Michail
 Michal
 Michale
+Michalis
 Micheal
 Micheil
 Michel
@@ -2240,6 +2251,7 @@ Rutledge
 Rutter
 Ryan
 Sal
+Saddam
 Salem
 Salim
 Salman
@@ -2350,7 +2362,9 @@ Sherwin
 Sherwood
 Sherwynd
 Shimon
+Imam
 Shlomo
+Hipolito
 Sholom
 Shorty
 Shurlock
@@ -2943,3 +2957,89 @@ Zorro
 Rahul
 Shumeet
 Vibhu
+Alikhan
+Aysultan
+Erasyl
+Nurislam
+Alinur
+Ali
+Amir
+Sanzhar
+Nurasyl
+Arsen
+Miras
+Artyom
+Aldiyar
+Daniyar
+Maxim
+Mohammad
+Ahmad
+Omar
+Abdalrahman
+Abdallah
+Yosef
+Zaid
+Rayan
+Ali
+Mahmoud
+Ibrahim
+Hamzah
+Ameer
+Yamin
+Ayham
+Khaled
+Adam
+Karam
+Qusai
+Hashem
+Yusuf
+Eymen
+Mustafa
+Omer
+Berat
+Miraç
+Ayaz
+Ahmet
+Mehmet
+Muhammed
+Kerem
+Emir
+Ali
+Hamza
+Çinar
+Muhammed Ali
+Yigit
+Yunus Emre
+Ibrahim
+Enes
+Poyraz
+Hüseyin
+Ömer Faruk
+Emirhan
+Umut
+Furkan
+Muhammed Emin
+Hasan
+Mert
+Ömer Asaf
+Rüzgar
+Abdullah
+Ismail
+Burak
+Deniz
+Alperen
+Arda
+Yasin
+Talha
+Muahammed Emir
+Baran
+Eren
+Ertugrul
+Mehmet Aliv Aras
+Bünyamin
+Bilal
+Emre
+Yagiz
+Selim
+Mohammed
+Yosef

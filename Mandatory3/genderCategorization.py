@@ -5,7 +5,8 @@ def openFile(name):
     with open(name, 'r') as f:
         names = f.readlines()
         for n in names:
-            setOfNames.add(n.split('\n')[0])
+            setOfNames.add(n.split('\n')[0].lower())
+
 
     return setOfNames
 
@@ -15,21 +16,27 @@ maleNames = openFile('male.txt')
 #print(femaleNames)
 #print(maleNames)
 
+if not os.path.exists("gender"):
+    os.makedirs(os.path.dirname("gender/"))
+    os.makedirs(os.path.dirname("gender/manuel/"))
+    os.makedirs(os.path.dirname("gender/female/"))
+    os.makedirs(os.path.dirname("gender/male/"))
 
 for root, dirs, files in os.walk('lfw'):
     for file in files:
         split = file.split('.')
         if not (split[1].__contains__('db')):
             name = file.split('_')
-            if femaleNames.__contains__(name[0]) and not maleNames.__contains__(name[0]):
+            namelower = name[0].lower()
+            if femaleNames.__contains__(namelower) and not maleNames.__contains__(namelower):
                 manuel = False
-                newName = name[0]+"_"+name[1]+"_"+"female_"+name[len(name)-1]
-            elif maleNames.__contains__(name[0]) and not femaleNames.__contains__(name[0]):
+                newName = namelower+"_"+name[1]+"_"+"female_"+name[len(name)-1]
+            elif maleNames.__contains__(namelower) and not femaleNames.__contains__(namelower):
                 manuel = False
-                newName = name[0]+"_"+name[1]+"_"+"male_"+name[len(name)-1]
+                newName = namelower+"_"+name[1]+"_"+"male_"+name[len(name)-1]
             else:
                 manuel = True
-                newName = name[0] + "_" + name[1] + "_" + "manuel_"+name[len(name)-1]
+                newName = namelower + "_" + name[1] + "_" + "manuel_"+name[len(name)-1]
 
 
 
@@ -43,3 +50,4 @@ for root, dirs, files in os.walk('lfw'):
             else:
                 im.save(pathJoined)
             #Y.append(name[0] + name[1])
+
