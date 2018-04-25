@@ -48,7 +48,11 @@ def forFolder(path, n=10, maxValue= 45000):
                         theOutputChars = data[i + numberOfCharsToLearn]
                         charX.append(([CharsForids[char] for char in theInputChars]))
                         y.append(CharsForids[theOutputChars])
-                    rnnFunction.RNN(name="1EpochBulk_10F_20R.hdf5", charX=charX, y=y, numberOfCharsTolearn=numberOfCharsToLearn, numberOfUniqueChars=numberOfUniqueChars, idsForChars=idsForChars, train=True, epochs=1)
+                    rnnFunction.charLSTM(name="1EpochBulk_5F_20R.hdf5", charX=charX, y=y, numberOfCharsTolearn=numberOfCharsToLearn, numberOfUniqueChars=numberOfUniqueChars, idsForChars=idsForChars, train=True, epochs=1)
+                    rnnFunction.charRNN(name="1EpochBulk_7F_20R.hdf5", charX=charX, y=y,
+                                         numberOfCharsTolearn=numberOfCharsToLearn,
+                                         numberOfUniqueChars=numberOfUniqueChars, idsForChars=idsForChars, train=True,
+                                         epochs=1)
                     data = data[maxValue:]
                 #c += 1
-forFolder('data', n=10)
+forFolder('comm_use.C-H.txt', n=3)
