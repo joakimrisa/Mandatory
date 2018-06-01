@@ -7,6 +7,9 @@ import rnnFunction
 
 
 def forFolder(path, n=10, maxValue= 45000):
+    '''
+    This function splits the article to be forwarded to the char networks
+    '''
     data = []
     c = 0
     chars = set()

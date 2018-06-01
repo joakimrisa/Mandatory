@@ -1,6 +1,9 @@
 import os
 from PIL import Image
 def openFile(name):
+    '''
+    This function goes through the name list provided by the dataset and splits on the exact names to distinguish female and male
+    '''
     setOfNames = set()
     with open(name, 'r') as f:
         names = f.readlines()
@@ -12,9 +15,6 @@ def openFile(name):
 
 femaleNames = openFile('female.txt')
 maleNames = openFile('male.txt')
-
-#print(femaleNames)
-#print(maleNames)
 
 if not os.path.exists("gender"):
     os.makedirs(os.path.dirname("gender/"))
@@ -49,5 +49,5 @@ for root, dirs, files in os.walk('lfw'):
                 im.save(os.path.join(path, newName))
             else:
                 im.save(pathJoined)
-            #Y.append(name[0] + name[1])
+
 

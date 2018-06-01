@@ -32,7 +32,6 @@ class Node:
 
     def rouletteWheel(self, visitedEdges, startNode, endNode, numCities):
         visitedNodes = [oneEdge.toNode for oneEdge in visitedEdges]
-        # print(visitedNodes.__len__())
         if numCities <= visitedNodes.__len__():
             for edge in self.edges:
                 if edge.toNode == endNode:
@@ -100,10 +99,7 @@ class Greedy:
         currentEdge = None
         while (not checkAllNodesPresent(self.visitedEdges)):
             possibleEdges = [(edge.cost, edge) for edge in currentNode.edges if edge.toNode not in self.visitedNodes]
-            # print(possibleEdges)
-            # possibleEdges.sort()
             possibleEdges.sort(key=lambda edge: edge[0])
-            # import pdb;pdb.set_trace()
             currentEdge = possibleEdges[0][1]
             currentNode = currentEdge.toNode
             self.visitedEdges.append(currentEdge)
@@ -159,7 +155,9 @@ def loader2(country="no", limit=100):
 
 
 def loader(country="no", limit=100):
-    # Make so it asks for country file
+    '''
+    This function loads in the cities from a given country and a defined limit
+    '''
     global edges
     global nodes
     with codecs.open("worldcitiespop.csv", "r", encoding="utf-8", errors="ignore") as f:
@@ -170,20 +168,13 @@ def loader(country="no", limit=100):
                 break
             if line[0] == country and line[1].__len__() > 2:
                 line[1] = line[1].replace(" ", "")
-                print("Starter på nytt dd")
-                # nodes[line[1]] = Node(line[1].upper())
                 la = int(float(line[5]) * 100)
                 lo = int(float(line[6]) * 100)
                 hashval = la * lo
                 if not hashval in possibrahCities:
                     if not line[1] in nodes:
-                        print(len(possibrahCities))
-                        print(len(nodes))
                         possibrahCities[hashval] = line
                         nodes[line[1]] = Node(line[1].upper())
-                        print("1")
-                        print(len(possibrahCities))
-                        print(len(nodes))
 
                 elif possibrahCities[hashval][4] < line[4]:
                     del nodes[possibrahCities[hashval][1]]
@@ -192,25 +183,9 @@ def loader(country="no", limit=100):
 
 
                 elif possibrahCities[hashval][1] != line[1]:
-                    print("3")
-                    print(len(possibrahCities))
-                    print(len(nodes))
                     del nodes[possibrahCities[hashval][1]]
                     possibrahCities[hashval] = line
-                    print(len(line[1]))
-                    if line[1] == 'akarvik':
-                        print("EG E NÅ UTEN SPACE")
-                    print(line[1])
                     nodes[possibrahCities[hashval][1]] = Node(line[1].upper())
-
-                    # kebabfix, må endres om goody sier at vi må ha alle byer med ;)
-
-    for i in possibrahCities:
-        if not possibrahCities[i][1] in nodes:
-            print("AVIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIK")
-
-    print(possibrahCities)
-    print(nodes)
 
     for departure in possibrahCities:
         la1 = possibrahCities[departure][5]  # x
@@ -222,8 +197,6 @@ def loader(country="no", limit=100):
                 xDot = abs(float(la2) - float(la1))
                 yDot = abs(float(lo2) - float(lo1))
                 distance = math.sqrt(xDot ** 2 + yDot ** 2)
-                # print(distance)
-                ##
                 if not possibrahCities[departure][1] in edges:
                     edges[possibrahCities[departure][1]] = []
                 edges[possibrahCities[departure][1]].append(
@@ -232,21 +205,8 @@ def loader(country="no", limit=100):
         nodes[possibrahCities[departure][1]].edges = edges[possibrahCities[departure][1]]
         edges[possibrahCities[departure][1]] = []
         print(nodes[possibrahCities[departure][1]].edges.__len__())
-    # print(nodes['aabjorgan'].edges)
     print(nodes.__len__())
-    # print(nodes['aabjorgan'].edges.__len__())
-    # Write to file
 
-
-'''
-print("Greedy")
-g = Greedy()
-g.walk(a)
-print("Cost:", sum([e.cost for e in g.visitedEdges]))
-
-
-# Cost function
-'''
 
 
 def getSum(edges):
@@ -261,9 +221,7 @@ class ANT:
         currentNode = startNode
         currentEdge = None
         while (not self.visitedEdges.__len__() >= numCities + 1):
-            # print(self.visitedEdges)
             currentEdge = currentNode.rouletteWheel(self.visitedEdges, startNode, endNode, numCities)
-            # print(type(currentEdge))
             currentNode = currentEdge.toNode
             self.visitedEdges.append(currentEdge)
 
@@ -293,6 +251,9 @@ def checkAllEdges(edges):
         edge.checkPheromones()
 
 def multiLayer(clusterSize = 10):
+    '''
+    This function defines the clustering
+    '''
     global nodes
     global edges
     global clusterNodes
@@ -327,12 +288,20 @@ def multiLayer(clusterSize = 10):
             clusterNodes[cluster].nodes[node].edges = edgeList
 
 def findCity(city):
+    '''
+    This checks which cluster an input city is in.
+    '''
     global clusterNodes
     for cluster in clusterNodes:
         if city in clusterNodes[cluster].nodes:
             return cluster
 
 def runWalk2(startCity, endCity, numCity=10, iterations=10):
+    '''
+    This function uses ant with pheromones combined with clustering to find the best route from a startcity and endcity
+     with number of Cities defined and iterations.
+    '''
+
     global MAXCOST
     global clusterNodes
     last = 0
@@ -346,15 +315,12 @@ def runWalk2(startCity, endCity, numCity=10, iterations=10):
     while counter < iterations:
         for cluster in clusterNodes:
             for city in clusterNodes[cluster].nodes:
-                #cityCluster = findCity(city)
                 evaporate(clusterNodes[cluster].nodes[city].edges)
                 ant = ANT()
-                # print(type(nodes['aabjorgan']))
                 ant.walk(clusterNodes[startCluster].nodes[startCity], clusterNodes[endCluster].nodes[endCity], numCity)
                 ant.pheromones()
                 checkAllEdges(clusterNodes[cluster].nodes[city].edges)
                 last = currentScore
-                # print i,getSum(ant.visitedEdges)
                 currentSum = getSum(ant.visitedEdges)
                 allSums.add(currentSum)
                 if counter > int(0.9*iterations):
@@ -365,23 +331,24 @@ def runWalk2(startCity, endCity, numCity=10, iterations=10):
     print(ant.visitedEdges)
 
 def runWalk(startCity, endCity, numCity=10, iterations=10):
+    '''
+    This function uses ant with pheromones to find the best route from a startcity and endcity
+     with number of Cities defined and iterations.
+    '''
     global MAXCOST
     last = 0
     counter = 0
     allSums = set()
     for city in edges:
         MAXCOST += getSum(edges[city])
-    #currentSum = 0
     while counter < iterations:
         for city in nodes:
             evaporate(nodes[city].edges)
             ant = ANT()
-            # print(type(nodes['aabjorgan']))
             ant.walk(nodes[startCity], nodes[endCity], numCity)
             ant.pheromones()
             checkAllEdges(nodes[city].edges)
             last = currentScore
-            # print i,getSum(ant.visitedEdges)
             currentSum = getSum(ant.visitedEdges)
             allSums.add(currentSum)
             if counter > int(0.9 * iterations):
@@ -394,6 +361,10 @@ def runWalk(startCity, endCity, numCity=10, iterations=10):
 
 loader2('no', 1000)
 
+'''
+Runs the different solution where the goal is to get from aabjorgan to aadalsbruk with 25 cities in between
+'''
+
 start = time.time()
 runWalk('aabjorgan', 'aadalsbruk', 25, iterations=5000)
 end = time.time()
@@ -404,20 +375,3 @@ start = time.time()
 runWalk2('aabjorgan', 'aadalsbruk', 25, iterations=5000)
 end = time.time()
 print(end-start)
-
-'''
-for i in range(100000):
-    evaporate(edges)
-    ant = ANT()
-    ant.walk(a)
-    ant.pheromones()
-    checkAllEdges(edges)
-    # print i,getSum(ant.visitedEdges)
-    print(getSum(ant.visitedEdges))
-
-# Printing
-ant = ANT()
-ant.walk(a)
-for edge in ant.visitedEdges:
-    print(edge, edge.pheromones)
-'''

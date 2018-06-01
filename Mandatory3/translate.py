@@ -1,3 +1,8 @@
+
+'''
+These functions are used to shift back and forth between numerical values and string representation of gender.
+Male, Female and manuel(which means its inconclusive)
+'''
 def toNumber(name):
 
     if name == 'male':

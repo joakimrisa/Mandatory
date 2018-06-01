@@ -4,6 +4,9 @@ import os
 import tarfile
 files = dict()
 
+'''
+This downloads all the articles from a given link
+'''
 files['comm_use.0-9A-B.txt.tar.gz'] = "ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/comm_use.0-9A-B.txt.tar.gz"
 #files['comm_use.C-H.txt.tar.gz'] = "ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/comm_use.C-H.txt.tar.gz"
 #files['comm_use.I-N.txt.tar.gz']="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/comm_use.I-N.txt.tar.gz"

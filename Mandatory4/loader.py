@@ -3,6 +3,11 @@ import re
 
 
 def forFolderWords(path, n=10):
+    '''
+
+    This function loads in articles according to words
+    '''
+
     data = []
     c = 0
     nonWords = set()
@@ -22,32 +27,26 @@ def forFolderWords(path, n=10):
             c += 1
             if n == c:
                 chars = sorted(list(set(data)))
-                print(chars)
                 totalChars = len(data)
                 numberOfUniqueChars = len(chars)
-
                 CharsForids = {char: Id for Id, char in enumerate(chars)}
-
                 idsForChars = {Id: char for Id, char in enumerate(chars)}
-
                 numberOfCharsToLearn = 100
-
                 counter = totalChars - numberOfCharsToLearn
-
                 charX = []
-
                 y = []
-
                 for i in range(0, counter):
                     theInputChars = data[i:i + numberOfCharsToLearn]
                     theOutputChars = data[i + numberOfCharsToLearn]
                     charX.append([CharsForids[char] for char in theInputChars])
                     y.append(CharsForids[theOutputChars])
-                print(data)
                 return (charX, y, numberOfCharsToLearn, numberOfUniqueChars, idsForChars)
 
 
 def forFolder(path, n=10):
+    '''
+    This folder loads in articles according to chars
+    '''
     data = []
     c = 0
     for root, dirs, files in os.walk(path):
@@ -59,17 +58,11 @@ def forFolder(path, n=10):
                 chars = sorted(list(set(data)))
                 totalChars = len(data)
                 numberOfUniqueChars = len(chars)
-                print(chars)
                 CharsForids = {char: Id for Id, char in enumerate(chars)}
-
                 idsForChars = {Id: char for Id, char in enumerate(chars)}
-
                 numberOfCharsToLearn = 100
-
                 counter = totalChars - numberOfCharsToLearn
-
                 charX = []
-
                 y = []
 
                 for i in range(0, counter, 1):
@@ -82,19 +75,17 @@ def forFolder(path, n=10):
 
 
 def preprocessing(name):
+    '''
+    This function loads in an article and preprocesses it for char networks
+    '''
     data = open(name, errors='ignore').read().lower()
     chars = sorted(list(set(data)))
     totalChars = len(data)
     numberOfUniqueChars = len(chars)
-
     CharsForids = {char: Id for Id, char in enumerate(chars)}
-
     idsForChars = {Id: char for Id, char in enumerate(chars)}
-
     numberOfCharsToLearn = 100
-
     counter = totalChars - numberOfCharsToLearn
-
     charX = []
 
     y = []

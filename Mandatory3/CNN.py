@@ -9,6 +9,7 @@ import keras
 import matplotlib.pyplot as plt
 import lfwLoader
 import os
+from keras.preprocessing.image import ImageDataGenerator
 
 def modellen():
         model = Sequential()
@@ -36,27 +37,10 @@ batch_size = 128
 num_classes = 2
 epochs = 12
 
-
-
 img_rows, img_cols = 64,64
-(x_train,y_train),(x_test,y_test) = lfwLoader.loader(folder="nyeTest1", trainingAmount=0)#mnist.load_data()
-#print(x_train)
+(x_train,y_train),(x_test,y_test) = lfwLoader.loader(folder="newyeah", trainingAmount=0.8)#mnist.load_data()
 
-#print(type(x_train))
-
-#print(x_train[200])
-
-'''
-for x in range(100):
-        n = random.randint(0,len(x_train))
-        #plt.plot(10,10,x)
-        plt.axis('off')
-        plt.imshow(x_train[n].reshape(28,28),cmap='gray')
-plt.show()
-'''
 x_train = x_train
-print(x_train)
-print(x_train.shape)
 y_train = y_train
 
 x_train = x_train.reshape(x_train.shape[0],img_rows, img_cols,1)
@@ -76,7 +60,7 @@ y_test = keras.utils.to_categorical(y_test,num_classes)
 model = modellen()
 if os.path.exists("weights.h5py"):
         model.load_weights("weights.h5py")
-#model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test))
+model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test))
 score = model.evaluate(x_test, y_test, verbose=1)
 print(score)
-#model.save("weights.h5py")
+model.save("weights.h5py")

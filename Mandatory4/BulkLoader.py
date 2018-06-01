@@ -5,7 +5,9 @@ import rnnFunction
 
 
 
-
+'''
+This function loads in the articles in bulk
+'''
 def forFolder(path, n=10, maxValue= 70000):
     data = []
     c = 0
