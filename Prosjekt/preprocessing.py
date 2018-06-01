@@ -22,6 +22,9 @@ def reshape(x, row, col, rgb=False):
 
 
 def dice(song, millisecond):
+    '''
+    Used to split the song.
+    '''
     length = int(len(song) / (millisecond))
     songs = []
     for i in range(length):
@@ -31,6 +34,10 @@ def dice(song, millisecond):
 
 
 def splitAndOverlap():
+    '''
+    Splits and creates overlapping chunks.
+    '''
+
     for root, dirs, files in os.walk("training/music_org/LPNEW(32)"):
         for file in files:
             path = os.path.join(root, file)
@@ -69,6 +76,11 @@ def splitAndOverlap():
 #splitAndOverlap()
 
 def split():
+    '''
+
+    Split the song into chunks.
+    '''
+
     for root, dirs, files in os.walk("training/music_org/PL"):
         for file in files:
             path = os.path.join(root, file)
@@ -95,41 +107,13 @@ def split():
                 i += 1
 
 
-# split()
-def testDepth(file):
-    fs, sound = wavfile.read(file)
-
-    print("EG HEDE JOAKIM")
-
-
-# testDepth('training/music_splitted/LP_0.001/LPImage [1]_23121.wav')
-# testDepth('training/music_splitted/CD_0.001(NEW)/Image [1]_1.wav')
-# testDepth('training/music_splitted/CD_0.001(NEW)/Image [1]_2.wav')
-# testDepth('training/music_splitted/CD_0.001(NEW)/Image [1]_3.wav')
-
-'''def librosaPictureCreator(path, savePath):
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            path = os.path.join(root, file)
-            y, sr = librosa.load(path, duration=10, sr=None)
-            D = librosa.stft(y, n_fft=80)
-            print(D.shape)
-            Mordi = librosa.istft(D, hop_length=20)
-            print(Mordi.shape)
-            print(sum(y)-sum(Mordi))
-            scipy.io.wavfile.write("testOut.wav", sr, y)
-
-            
-            picture = librosa
-            print(picture)
-            plt.figure(figsize=(10, 4))
-            display.specshow(picture)
-            plt.show()
-            '''
-
-
 # librosaPictureCreator('training/music_splitted/CD_1.0', 'training/pictures/CD_Pictures_1.0_300')
 def findPeeks(array, n):
+    '''
+
+    Finds n number of peeks in the song.
+    '''
+
     k = (0, -2)
     c = 0
     allValues = []
@@ -143,6 +127,11 @@ def findPeeks(array, n):
     return allValues[:n]
 
 def findRandomIndices(array, n):
+    '''
+    Find some random points in the song.
+    '''
+
+
     import random
     setOfRandomValues = set()
     max = array.__len__()-1
@@ -154,6 +143,10 @@ def findRandomIndices(array, n):
 
 
 def findPeek(array):
+    '''
+    Finds the peek.
+    '''
+
     k = (0, -2)
     c = 0
     for i in array:
@@ -166,6 +159,10 @@ def findPeek(array):
 
 # findPeek([1,3,4,4,4,4,4])
 def findPeakAndSurrounding(array, n, maxValue):
+    '''
+    Finds the highest peek in the song and some surrounding references.
+    '''
+
     indices = []
     peak = findPeek(array)
     peakI = peak[1]
@@ -179,6 +176,12 @@ def findPeakAndSurrounding(array, n, maxValue):
 
 
 def alignTwoSongs(LPSongPath, CDSongPath, numberOfReferences, searchSpace):
+    '''
+
+    This function is used to calculate and shifts the song.
+    '''
+
+
     LP = wavfile.read(LPSongPath)
     CD = wavfile.read(CDSongPath)
 
@@ -273,6 +276,10 @@ def normalise(x):
     return (x + 2147483648)/(2*2147483648)
 
 def AllignDasChunkis(path,path2,numberOfReferences, searchSpace):
+    '''
+    Used iterate through the list of chunks.
+    '''
+
     for root, dirs, files in os.walk(path):
         for file in files:
             cdPath = os.path.join(root, file)
@@ -283,11 +290,21 @@ def AllignDasChunkis(path,path2,numberOfReferences, searchSpace):
 AllignDasChunkis('Training/Ali/CD_4.0', 'Training/Ali/LP_4.0', 3000, 9600)
 
 def removepad(sound, before, endPos):
+    '''
+    Remove padding
+    '''
 
     return sound[before:endPos]
 
 
 def mergeChunks(path, savePath):
+
+    '''
+    Merged the chunks into one song.
+    '''
+
+
+
     relatedChunks = dict()
     for root, dirs, files in os.walk(path):
         for file in files:

@@ -3,6 +3,9 @@ from keras.layers import Conv2D, MaxPooling2D, Dense, UpSampling2D, Input
 from keras.models import Model
 from keras.models import Sequential
 from keras.layers.core import Reshape
+'''
+A list of different models used.
+'''
 
 def denseModelFidjeSCIPYWAV():
     model = Sequential()

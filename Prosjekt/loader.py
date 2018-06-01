@@ -10,6 +10,9 @@ from scipy.io import wavfile
 from bitstring import BitArray
 
 def multipleLoad(path1, path2, trainingAmount=0.8, limit=1000):
+    '''
+    Loads multiple soundfiles. CD and his corresponding LP song.
+    '''
     X = []
     Y = []
     for root, dirs, files in os.walk(path1):
@@ -75,6 +78,9 @@ def load(file):
 #load('training/music_splitted/CD_0.001/Image [1]_1.wav')
 
 def loadArray(path, trainingAmount=0.8, limit=1000):
+    '''
+    Loads the value array from a song.
+    '''
     X = []
     Y = []
     for root, dirs, files in os.walk(path):
@@ -99,6 +105,9 @@ def loadArray(path, trainingAmount=0.8, limit=1000):
 
 
 def loaderPictures(path, testingAmount = 0.8, row =28, col=28, shuffle=False, rgb=False, limit=(False, -1)):
+    '''
+    Loads pictures.
+    '''
     megaList = []
     X = []
     Y = []

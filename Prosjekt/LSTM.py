@@ -6,6 +6,9 @@ import numpy as np
 import os
 import audiosegment
 
+'''
+A LSTM model that trained with CD as 44.1kHz and LP 96kHz
+'''
 
 batch_size = 64  # Batch size for training.
 epochs = 100  # Number of epochs to train for.

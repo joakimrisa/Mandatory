@@ -9,6 +9,10 @@ from PIL import Image
 import Models
 import preprocessing
 
+'''
+This is used to test the models after training. 
+'''
+
 def to_rgb2(im):
     # as 1, but we use broadcasting in one line
     w, h = im.shape

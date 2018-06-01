@@ -8,6 +8,10 @@ import audiosegment
 from keras.layers import TimeDistributed
 from keras.layers import RepeatVector
 
+'''
+Yet another attempt with LSTM. 
+'''
+
 batch_size = 64  # Batch size for training.
 epochs = 100  # Number of epochs to train for.
 latent_dim = 256  # Latent dimensionality of the encoding space.
@@ -53,11 +57,7 @@ CD = np.array(CD)
 #CD = preprocessing.normalize(CD)
 
 
-CD = CD.reshape(CD.shape[0], CD.shape[1], 1)
-print(CD.shape)
-LP = np.array(LP)
-LP = LP.reshape(LP.shape[0], LP.shape[1], 1)
-print(LP.shape)
+
 
 model = Sequential()
 model.add(LSTM(150, input_shape=(192, 1)))

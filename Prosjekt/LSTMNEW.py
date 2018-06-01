@@ -6,6 +6,10 @@ import numpy as np
 import os
 from scipy.io import wavfile
 import audiosegment
+'''
+LSTM model for CD and LP as 96k
+'''
+
 
 batch_size = 64  # Batch size for training.
 epochs = 100  # Number of epochs to train for.

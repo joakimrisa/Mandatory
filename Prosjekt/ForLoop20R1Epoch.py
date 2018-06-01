@@ -4,7 +4,10 @@ import numpy as np
 import autoencoder
 
 
-def Luls(path, path2, testingAmount=0.8, n=10):
+def Trainer(path, path2, testingAmount=0.8, n=10):
+    '''
+    This fuction is used to train the AutoEncoder
+    '''
     row, col = 1440, 1920
     X = []
     X_salt = []
@@ -40,4 +43,4 @@ def Luls(path, path2, testingAmount=0.8, n=10):
 
                         # Luls('training/pictures/LP_Pictures_1.0_300')
 
-Luls('training/pictures/LP_Pictures_1.0_300', 'training/pictures/CD_Pictures_1.0_300')
+Trainer('training/pictures/LP_Pictures_1.0_300', 'training/pictures/CD_Pictures_1.0_300')

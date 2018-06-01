@@ -10,6 +10,12 @@ import audiosegment
 import pydub
 from scipy.io import wavfile
 
+'''
+This file contains some of the different models used in the project.
+'''
+
+
+
 def DenseModel():
 
     x_train, x_train_noisy, x_test, x_test_noisy = loader.multipleLoad('training/music_splitted/CD_0.001', 'training/music_splitted/LP_0.001', limit=50000)
